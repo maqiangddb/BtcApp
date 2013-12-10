@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MainActivity</string>
+    <string name="platform">交易平台</string>
+    <string name="last_price">最近成交价</string>
+    <string name="buy_price">买一价</string>
+    <string name="sell_price">卖一价</string>
+    <string name="volumn">成交量</string>
+</resources>
