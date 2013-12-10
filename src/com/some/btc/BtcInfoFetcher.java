@@ -34,11 +34,11 @@ public class BtcInfoFetcher {
     }
     
     /**
-     * 拉取信息
+     * 拉取信息 btcchina|MtGox
      * @return JSONObject
      */
-    public JSONObject fetch() throws JSONException {
-      String jsonString = fetchRaw();
+    public JSONObject fetch(String platform) throws JSONException {
+      String jsonString = fetchRaw(platform);
       JSONObject jsonObject = new JSONObject(jsonString);
        Log.e("mq", "fetch data:"+jsonObject.toString());
       return jsonObject.getJSONObject("ticker");
@@ -49,10 +49,10 @@ public class BtcInfoFetcher {
      * it may take 30 seconds or more
      * @return
      */
-    public String fetchRaw() {
+    public String fetchRaw(String platform) {
         double random = Math.random();
         
-        String url = "http://info.btc123.com/lib/jsonProxyEx.php?type=btcchinaTicker&suffix=" + random;
+        String url = "http://info.btc123.com/lib/jsonProxyEx.php?type="+platform+"Ticker&suffix=" + random;
         System.out.println(url);
         
         HttpClient client = new DefaultHttpClient();
