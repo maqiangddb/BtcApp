@@ -92,6 +92,7 @@ public class BtcInfoFetcher {
                 e.printStackTrace();
             } catch (Exception e) {
             }
+        //response.getStatusLine().getStatusCode());
       
         BufferedReader rd = null;
             try {

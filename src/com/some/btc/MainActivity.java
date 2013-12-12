@@ -70,7 +70,6 @@ public class MainActivity extends Activity
     private void fetchData() throws JSONException {
         BtcInfoFetcher fetcher = new BtcInfoFetcher();
         BtcInfo btcInfo = fetcher.fetch("btcchina");
-        ArrayList values = new ArrayList();
         DataObject btc_china = new DataObject(
                 "btc china",
                 btcInfo.getLastPrice(),
@@ -78,7 +77,17 @@ public class MainActivity extends Activity
                 btcInfo.getSellPrice(),
                 btcInfo.getVolume()
         );
+        
+        BtcInfo mgBtcInfo = fetcher.fetch("MtGox");
+        DataObject mt_gox = new DataObject(
+                "MtGox",
+                mgBtcInfo.getLastPrice(),
+                mgBtcInfo.getBuyPrice(),
+                mgBtcInfo.getSellPrice(),
+                mgBtcInfo.getVolume()
+        );
         _dataAdapter.add(btc_china);
+        _dataAdapter.add(mt_gox);
     }
 
     private class DataList extends ArrayAdapter<DataObject> {
