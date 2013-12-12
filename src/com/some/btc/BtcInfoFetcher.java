@@ -47,6 +47,7 @@ public class BtcInfoFetcher {
       if (platform == "btcchina") {
     	  System.out.println(jsonObject.toString());
     	  jsonObject = jsonObject.getJSONObject("ticker");
+    	  btcInfo.setName("比特币中国");
     	  btcInfo.setBuyPrice(jsonObject.getString("buy"));
     	  btcInfo.setSellPrice(jsonObject.getString("sell"));
     	  btcInfo.setVolume(jsonObject.getString("vol"));
@@ -54,6 +55,7 @@ public class BtcInfoFetcher {
       } else if (platform == "MtGox") {
     	  if (jsonObject.getString("result").equals("success")) {
     		  jsonObject = jsonObject.getJSONObject("data");
+    		  btcInfo.setName("MtGox");
     		  btcInfo.setLastPrice(jsonObject.getJSONObject("last").getString("display_short"));
     		  btcInfo.setBuyPrice(jsonObject.getJSONObject("buy").getString("display_short"));
     		  btcInfo.setSellPrice(jsonObject.getJSONObject("sell").getString("display_short"));
