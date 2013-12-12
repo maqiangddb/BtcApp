@@ -29,19 +29,40 @@ public class BtcInfoFetcher {
         // test
     	// also an example
         BtcInfoFetcher btcInfoFetcher = new BtcInfoFetcher();
-        JSONObject jsonObject = btcInfoFetcher.fetch();
-        System.out.println(jsonObject.toString());
+        BtcInfo btcInfo = btcInfoFetcher.fetch("btcchina");
+//        BtcInfo btcInfo = btcInfoFetcher.fetch("MtGox");
+        System.out.println(btcInfo.toString());
     }
     
     /**
      * 拉取信息 btcchina|MtGox
      * @return JSONObject
      */
-    public JSONObject fetch(String platform) throws JSONException {
+    public BtcInfo fetch(String platform) throws JSONException {
+    	BtcInfo btcInfo = new BtcInfo();
       String jsonString = fetchRaw(platform);
       JSONObject jsonObject = new JSONObject(jsonString);
        Log.e("mq", "fetch data:"+jsonObject.toString());
-      return jsonObject.getJSONObject("ticker");
+      // here we should use ...
+      if (platform == "btcchina") {
+    	  System.out.println(jsonObject.toString());
+    	  jsonObject = jsonObject.getJSONObject("ticker");
+    	  btcInfo.setBuyPrice(jsonObject.getString("buy"));
+    	  btcInfo.setSellPrice(jsonObject.getString("sell"));
+    	  btcInfo.setVolume(jsonObject.getString("vol"));
+    	  btcInfo.setLastPrice(jsonObject.getString("last"));
+      } else if (platform == "MtGox") {
+    	  if (jsonObject.getString("result").equals("success")) {
+    		  jsonObject = jsonObject.getJSONObject("data");
+    		  btcInfo.setLastPrice(jsonObject.getJSONObject("last").getString("display_short"));
+    		  btcInfo.setBuyPrice(jsonObject.getJSONObject("buy").getString("display_short"));
+    		  btcInfo.setSellPrice(jsonObject.getJSONObject("sell").getString("display_short"));
+    		  btcInfo.setVolume(jsonObject.getJSONObject("vol").getString("display_short"));
+    	  } else {
+    		  System.out.println("error");
+    	  }
+      }
+      return btcInfo;
     }
 
     /**
@@ -63,7 +84,6 @@ public class BtcInfoFetcher {
         HttpResponse response = null;
             try {
                 response = client.execute(request);
-                Log.e("mq", "!!!!!!!!!!!!!!");
             } catch (ClientProtocolException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -71,11 +91,7 @@ public class BtcInfoFetcher {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (Exception e) {
-                Log.e("mq","????????????????");
             }
-        Log.e("mq", "response:"+response);
-        //System.out.println("Response Code: " +
-        //response.getStatusLine().getStatusCode());
       
         BufferedReader rd = null;
             try {
