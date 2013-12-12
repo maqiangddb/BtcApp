@@ -12,15 +12,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class MainActivity extends Activity
 {
 
     ListView _dataList;
-    ArrayAdapter _dataAdapter;
+    ArrayAdapter<BtcInfo> _dataAdapter;
 
     String[] KEYS = {
             "platform",
@@ -70,27 +67,15 @@ public class MainActivity extends Activity
     private void fetchData() throws JSONException {
         BtcInfoFetcher fetcher = new BtcInfoFetcher();
         BtcInfo btcInfo = fetcher.fetch("btcchina");
-        DataObject btc_china = new DataObject(
-                "btc china",
-                btcInfo.getLastPrice(),
-                btcInfo.getBuyPrice(),
-                btcInfo.getSellPrice(),
-                btcInfo.getVolume()
-        );
-        
+
         BtcInfo mgBtcInfo = fetcher.fetch("MtGox");
-        DataObject mt_gox = new DataObject(
-                "MtGox",
-                mgBtcInfo.getLastPrice(),
-                mgBtcInfo.getBuyPrice(),
-                mgBtcInfo.getSellPrice(),
-                mgBtcInfo.getVolume()
-        );
-        _dataAdapter.add(btc_china);
-        _dataAdapter.add(mt_gox);
+
+        _dataAdapter.clear();
+        _dataAdapter.add(btcInfo);
+        _dataAdapter.add(mgBtcInfo);
     }
 
-    private class DataList extends ArrayAdapter<DataObject> {
+    private class DataList extends ArrayAdapter<BtcInfo> {
 
         private int _itemLayout;
 
@@ -102,7 +87,7 @@ public class MainActivity extends Activity
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater inflater = getLayoutInflater();
-            DataObject data = getItem(position);
+            BtcInfo info = getItem(position);
             View result = inflater.inflate(_itemLayout, new LinearLayout(this.getContext()), true);
             TextView platform = (TextView) result.findViewById(R.id.platform);
             TextView last_price = (TextView) result.findViewById(R.id.last_price);
@@ -110,30 +95,13 @@ public class MainActivity extends Activity
             TextView sell_price = (TextView) result.findViewById(R.id.sell_price);
             TextView volume = (TextView) result.findViewById(R.id.volumn);
 
-            platform.setText(data._platform);
-            last_price.setText(data._lastPrice);
-            buy_price.setText(data._buyPrice);
-            sell_price.setText(data._sellPrice);
-            volume.setText(data._volume);
+            platform.setText(info.getName());
+            last_price.setText(info.getLastPrice());
+            buy_price.setText(info.getBuyPrice());
+            sell_price.setText(info.getSellPrice());
+            volume.setText(info.getVolume());
             return result;
         }
-    }
-
-    private class DataObject {
-        public String _platform;
-        public String _lastPrice;
-        public String _buyPrice;
-        public String _sellPrice;
-        public String _volume;
-
-        DataObject(String platform, String lastPrice, String buyPrice, String sellPrice, String volumn) {
-            _platform = platform;
-            _lastPrice = lastPrice;
-            _buyPrice = buyPrice;
-            _sellPrice = sellPrice;
-            _volume = volumn;
-        }
-
     }
 
 }
