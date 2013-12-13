@@ -21,18 +21,6 @@ import java.io.InputStreamReader;
  *
  */
 public class BtcInfoFetcher {
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) throws JSONException {
-        // test
-    	// also an example
-        BtcInfoFetcher btcInfoFetcher = new BtcInfoFetcher();
-        BtcInfo btcInfo = btcInfoFetcher.fetch("btcchina");
-//        BtcInfo btcInfo = btcInfoFetcher.fetch("MtGox");
-        System.out.println(btcInfo.toString());
-    }
     
     /**
      * 拉取信息 btcchina|MtGox
@@ -50,7 +38,9 @@ public class BtcInfoFetcher {
     	  btcInfo.setName("比特币中国");
     	  btcInfo.setBuyPrice(jsonObject.getString("buy"));
     	  btcInfo.setSellPrice(jsonObject.getString("sell"));
-    	  btcInfo.setVolume(jsonObject.getString("vol"));
+    	  String vol = jsonObject.getString("vol");
+    	  float volf = Float.parseFloat(vol);
+		btcInfo.setVolume(String.format("%.2f", volf));
     	  btcInfo.setLastPrice(jsonObject.getString("last"));
       } else if (platform == "MtGox") {
     	  if (jsonObject.getString("result").equals("success")) {
@@ -59,7 +49,7 @@ public class BtcInfoFetcher {
     		  btcInfo.setLastPrice(jsonObject.getJSONObject("last").getString("display_short"));
     		  btcInfo.setBuyPrice(jsonObject.getJSONObject("buy").getString("display_short"));
     		  btcInfo.setSellPrice(jsonObject.getJSONObject("sell").getString("display_short"));
-    		  btcInfo.setVolume(jsonObject.getJSONObject("vol").getString("display_short"));
+    		  btcInfo.setVolume(String.format("%.2f", Float.parseFloat(jsonObject.getJSONObject("vol").getString("value"))));
     	  } else {
     		  System.out.println("error");
     	  }
