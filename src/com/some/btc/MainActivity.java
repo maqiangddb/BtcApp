@@ -19,14 +19,6 @@ public class MainActivity extends Activity
     ListView _dataList;
     ArrayAdapter<BtcInfo> _dataAdapter;
 
-    String[] KEYS = {
-            "platform",
-            "last",
-            "buy",
-            "sell",
-            "vol"
-    };
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -39,12 +31,21 @@ public class MainActivity extends Activity
     @Override
     public void onResume() {
         super.onResume();
+        
+        new Thread() {
 
-        try {
-            fetchData();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+			@Override
+			public void run() {
+				super.run();
+				try {
+					fetchData(); // amazing, it will automatic become a closure !
+				} catch (JSONException e) {
+					// TODO time out or ?
+					e.printStackTrace();
+				}
+			}
+        	
+        }.start();
     }
 
     @Override
