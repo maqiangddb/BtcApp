@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,16 +29,13 @@ public class MainActivity extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
         initUI();
     }
 
     @Override
     public void onResume() {
-    	Log.d("xiaochi", "onResume");
         super.onResume();
 		fetchData();
-		Log.d("xiaochi", "onResume end");
     }
 
     @Override
@@ -51,17 +49,24 @@ public class MainActivity extends Activity
     }
 
     private void initUI() {
-    	Log.d("xiaochi", "initUI");
         setContentView(R.layout.main);
+		setTitleTextSize();
         _dataList = (ListView) findViewById(R.id.data_list);
         _dataAdapter = new DataList(this, R.layout.list_item);
         _dataList.setAdapter(_dataAdapter);
-        Log.d("xiaochi", "initUI end");
     }
+
+	private void setTitleTextSize() {
+		LinearLayout ll = (LinearLayout) findViewById(R.id.title);
+		for	(int i=0; i < ll.getChildCount(); i++) {
+			TextView tv = (TextView) ll.getChildAt(i);
+			tv.setTextSize(12);
+		}
+	}
 
     private void fetchData() {
         new FetchTask().execute();
-        Log.d("xiaochi", "---->fetchData has posted");
+        Log.d("xiaochi", "- fetch task has started");
     }
     
     @SuppressLint("NewApi")
