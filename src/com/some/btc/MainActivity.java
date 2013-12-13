@@ -1,8 +1,11 @@
 package com.some.btc;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,7 @@ import android.widget.TextView;
 
 import org.json.JSONException;
 
+@SuppressLint("NewApi")
 public class MainActivity extends Activity
 {
 
@@ -30,22 +34,10 @@ public class MainActivity extends Activity
 
     @Override
     public void onResume() {
+    	Log.d("xiaochi", "onResume");
         super.onResume();
-        
-        new Thread() {
-
-			@Override
-			public void run() {
-				super.run();
-				try {
-					fetchData(); // amazing, it will automatic become a closure !
-				} catch (JSONException e) {
-					// TODO time out or ?
-					e.printStackTrace();
-				}
-			}
-        	
-        }.start();
+		fetchData();
+		Log.d("xiaochi", "onResume end");
     }
 
     @Override
@@ -59,22 +51,48 @@ public class MainActivity extends Activity
     }
 
     private void initUI() {
+    	Log.d("xiaochi", "initUI");
         setContentView(R.layout.main);
         _dataList = (ListView) findViewById(R.id.data_list);
         _dataAdapter = new DataList(this, R.layout.list_item);
         _dataList.setAdapter(_dataAdapter);
+        Log.d("xiaochi", "initUI end");
     }
 
-    private void fetchData() throws JSONException {
-        BtcInfoFetcher fetcher = new BtcInfoFetcher();
-        BtcInfo btcInfo = fetcher.fetch("btcchina");
-
-        BtcInfo mgBtcInfo = fetcher.fetch("MtGox");
-
-        _dataAdapter.clear();
-        _dataAdapter.add(btcInfo);
-        _dataAdapter.add(mgBtcInfo);
+    private void fetchData() {
+        new FetchTask().execute();
+        Log.d("xiaochi", "---->fetchData has posted");
     }
+    
+    @SuppressLint("NewApi")
+	class FetchTask extends AsyncTask<Object, Object, Object> {
+    	BtcInfo btcInfo = null;
+        BtcInfo mgBtcInfo = null;
+
+		@Override
+		protected Object doInBackground(Object... arg0) {
+			BtcInfoFetcher fetcher = new BtcInfoFetcher();
+			try {
+				btcInfo = fetcher.fetch("btcchina");
+				mgBtcInfo = fetcher.fetch("MtGox");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			publishProgress();
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(Object... values) {
+			super.onProgressUpdate(values);
+			_dataAdapter.clear();
+	        _dataAdapter.add(btcInfo);
+	        _dataAdapter.add(mgBtcInfo);
+		}
+    	
+    };
 
     private class DataList extends ArrayAdapter<BtcInfo> {
 
